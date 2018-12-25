@@ -9,7 +9,6 @@
             "email": "doanln16@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
     "require": {
         "php": ">=7.0.0"
     },
