@@ -100,6 +100,45 @@ class Any {
 
 
     /**
+     * gắn giá trị cho thuộc tính với name là tên thuộc tính
+     * value là giá trị của thuộc tính
+     * @param string $name
+     * 
+     * 
+     */
+	public function set($name, $value = null)
+    {
+        if(is_string($name) || is_numeric($name)) $this->__data[$this->__prefix.$name] = $value;
+        return $this;
+        
+    }
+    
+    
+    /**
+     * lấy giá trị 
+     * @param string $name
+     * 
+     * @param mixed  $value
+     */
+	public function get($name = null)
+    {
+        if(is_null($name)) return $this->__data;
+        // nếu tồn tải key name trong mang data
+        if (array_key_exists($this->__prefix.$name, $this->__data)) {
+            $data = $this->__data[$this->__prefix.$name]; 
+            // nếu giá trị tìm được là mãng hoặc object và autoConvert được kích hoạt thì sẽ tạo object Light 
+            if((is_array($data) && is_object($data)) && $this->__isAutoConvert){
+                $light = new static($data, $autoConvert);
+                $light->setPrefix($this->__prefix);
+                return $light;
+            }
+            return $data;
+        }
+        return null;
+    }
+
+
+    /**
      * gộp 2 mảng lại với nhau
      * @param array $array              Mảng cần gộp với mảng chính
      * @param boolean $is_main          Ưu tiên tuộc tính của mảng gộp hay mảng gốc. true là mảng gộp
@@ -140,7 +179,7 @@ class Any {
      */
 	public function __set($name, $value)
     {
-        $this->__data[$this->__prefix.$name] = $value;
+        $this->set($name,$value);
         
     }
     
@@ -153,18 +192,7 @@ class Any {
      */
 	public function __get($name)
     {
-        // nếu tồn tải key name trong mang data
-        if (array_key_exists($this->__prefix.$name, $this->__data)) {
-            $data = $this->__data[$this->__prefix.$name]; 
-            // nếu giá trị tìm được là mãng hoặc object và autoConvert được kích hoạt thì sẽ tạo object Light 
-            if((is_array($data) && is_object($data)) && $this->__isAutoConvert){
-                $light = new static($data, $autoConvert);
-                $light->setPrefix($this->__prefix);
-                return $light;
-            }
-            return $data;
-        }
-        return null;
+        return $this->get($name);
     }
     /**
      * kiểm tra isset vd isset($light->prop)
